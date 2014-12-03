@@ -16,7 +16,7 @@ parser.add_argument(
 )
 
 NODE_CONFIG = {
-    "mem": 128,
+    "mem": 512,
     "cpus": 0.1
 }
 

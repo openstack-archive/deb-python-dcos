@@ -24,6 +24,11 @@ class FakeScheduler(Scheduler):
         self.cmd = cmd or self._default_cmd
         self.tasks = Queue()
         self.set_driver()
+        self.last = {
+            "mem": 1,
+            "num": 1,
+            "cpus": 0.01
+        }
 
     def __str__(self):
         return "{0}-{1}".format(self.name, self.version)
@@ -61,6 +66,7 @@ class FakeScheduler(Scheduler):
                 driver.declineOffer(offer.id)
                 continue
 
+            self.last = spec
             task = self.make_task(spec, offer)
             print("Launching task on [{0}]".format(offer.hostname))
             driver.launchTasks(offer.id, [task])
@@ -81,6 +87,11 @@ class FakeScheduler(Scheduler):
             r.scalar.value = spec[k]
 
         return task
+
+    # Restart lost tasks based off the last launched task spec
+    def statusUpdate(self, driver, status):
+        if status.state == mesos_pb2.TASK_LOST:
+            TASKS.put(self.last)
 
     def make_cmd(self):
         cmd = mesos_pb2.CommandInfo()
