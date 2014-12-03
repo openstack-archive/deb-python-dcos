@@ -1,0 +1,24 @@
+ {
+  "id": "/fwk-deis",
+  "cmd": null,
+  "args": [],
+  "user": null,
+  "env": {
+    "NAME": "DEIS",
+    "VERSION": "1.0.2"
+  },
+  "instances": 1,
+  "cpus": 0.1,
+  "mem": 128,
+  "disk": 0,
+  "executor": "",
+  "ports": [ 0 ],
+  "container": {
+    "type": "DOCKER",
+    "volumes": [],
+    "docker": {
+      "image": "thomasr/fserv",
+      "network": "HOST"
+    }
+  }
+}
