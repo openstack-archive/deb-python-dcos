@@ -14,63 +14,59 @@ def list():
     return [
         OrderedDict([
             ("name", "spark"),
-            ("version", "0.1.1")
+            ("version", "1.1.0")
         ]),
         OrderedDict([
             ("name", "cassandra"),
-            ("version", "0.1.1")
+            ("version", "2.1.2")
         ]),
         OrderedDict([
             ("name", "kafka"),
-            ("version", "0.1.1")
+            ("version", "0.8.2-beta")
         ]),
         OrderedDict([
             ("name", "kubernetes"),
-            ("version", "0.1.1")
+            ("version", "0.5")
         ]),
         OrderedDict([
             ("name", "chronos"),
-            ("version", "0.1.1")
+            ("version", "2.1.0")
         ]),
         OrderedDict([
             ("name", "jenkins"),
-            ("version", "0.1.1")
-        ]),
-        OrderedDict([
-            ("name", "spark"),
-            ("version", "0.1.1")
+            ("version", "1.588")
         ]),
         OrderedDict([
             ("name", "HDFS"),
-            ("version", "0.1.1")
+            ("version", "2.6.0")
         ]),
         OrderedDict([
             ("name", "DEIS"),
-            ("version", "0.1.1")
+            ("version", "1.0.2")
         ]),
         OrderedDict([
             ("name", "hadoop"),
-            ("version", "0.1.1")
+            ("version", "0.23.11")
         ]),
         OrderedDict([
             ("name", "yarn"),
-            ("version", "0.1.1")
+            ("version", "2.6.0")
         ]),
         OrderedDict([
             ("name", "accumulo"),
-            ("version", "0.1.1")
+            ("version", "1.6.1")
         ]),
         OrderedDict([
             ("name", "ElasticSearch"),
-            ("version", "0.1.1")
+            ("version", "1.4.1")
         ]),
         OrderedDict([
             ("name", "Aurora"),
-            ("version", "0.1.1")
+            ("version", "0.6.0")
         ]),
         OrderedDict([
             ("name", "Storm"),
-            ("version", "0.1.1")
+            ("version", "0.9.3")
         ])
     ]
 

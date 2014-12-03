@@ -1,0 +1,24 @@
+ {
+  "id": "/fwk-hdfs",
+  "cmd": null,
+  "args": [],
+  "user": null,
+  "env": {
+    "NAME": "HDFS",
+    "VERSION": "2.6.0"
+  },
+  "instances": 1,
+  "cpus": 0.1,
+  "mem": 128,
+  "disk": 0,
+  "executor": "",
+  "ports": [ 0 ],
+  "container": {
+    "type": "DOCKER",
+    "volumes": [],
+    "docker": {
+      "image": "thomasr/fserv",
+      "network": "HOST"
+    }
+  }
+}
