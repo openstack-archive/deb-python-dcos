@@ -4,9 +4,9 @@
   "args": [],
   "user": null,
   "env": {
-    "NAME": "spark",
+    "NAME": "chaos",
     "VERSION": "1.1.0",
-    "SHORT": "1"
+    "CHAOS": "1"
   },
   "instances": 1,
   "cpus": 0.1,

@@ -12,6 +12,7 @@ from . import scheduler
 from . import server
 
 SHORT = "sleep $(shuf -i10-60 -n1)"
+CHAOS = "sudo stop mesos-slave"
 
 def setup_logging():
     root = logging.getLogger()
@@ -33,6 +34,9 @@ def main():
 
     if os.environ.get("SHORT", False):
         scheduler.CURRENT._default_cmd = SHORT
+
+    if os.environ.get("CHAOS", False):
+        scheduler.CURRENT._default_cmd = CHAOS
 
     scheduler.CURRENT.run()
     server.app.run(

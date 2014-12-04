@@ -15,7 +15,7 @@ parser = cli.parser(
 )
 
 parser.add_argument(
-    "service", choices=registry.names()
+    "service", choices=registry.names() + [ "chaos" ]
 )
 
 @cli.init(parser)

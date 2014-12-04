@@ -4,28 +4,25 @@ from __future__ import absolute_import, print_function
 import sys
 import time
 
-from mesos.cli.master import CURRENT as MASTER
-
-from ..marathon import util
-from ..marathon.scheduler import CURRENT as MARATHON
 from .. import cli
+from .. import fake
+from .. import service
 
 parser = cli.parser(
     description="chaos on your cluster"
 )
 
+parser.add_argument(
+    "number", type=int, help="number of nodes to add"
+)
+
+NODE_CONFIG = {
+    "mem": 1,
+    "cpus": 0.01
+}
 
 @cli.init(parser)
 def main(args):
-    MARATHON.create(util.get_data("chaos.json"))
-    app = MARATHON.app("chaos")
-    sys.stdout.write("shutting down hosts")
-    try:
-        while True:
-            sys.stdout.write(".")
-            sys.stdout.flush()
-            time.sleep(1)
-    finally:
-        app.destroy()
-
-    print("Completed.")
+    cfg = copy.copy(NODE_CONFIG)
+    cfg["num"] = args.number
+    print(fake.start_tasks(service.find("chaos"), cfg))

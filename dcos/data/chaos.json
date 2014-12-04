@@ -1,17 +1,25 @@
-{
-  "cmd": "bash a.bash",
-  "constraints": [],
-  "cpus": 0.1,
-  "env": {},
-  "executor": "",
-  "id": "chaos",
+ {
+  "id": "/fwk-spark",
+  "cmd": null,
+  "args": [],
+  "user": null,
+  "env": {
+    "NAME": "spark",
+    "VERSION": "1.1.0",
+    "SHORT": "1"
+  },
   "instances": 1,
-  "mem": 16,
+  "cpus": 0.1,
+  "mem": 128,
   "disk": 0,
-  "ports": [
-    0
-  ],
-  "uris": [
-    "http://10.8.148.49/a.bash"
-  ]
+  "executor": "",
+  "ports": [ 0 ],
+  "container": {
+    "type": "DOCKER",
+    "volumes": [],
+    "docker": {
+      "image": "thomasr/fserv",
+      "network": "HOST"
+    }
+  }
 }
