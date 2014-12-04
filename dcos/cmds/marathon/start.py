@@ -2,6 +2,7 @@
 from __future__ import absolute_import, print_function
 
 import argparse
+import json
 import sys
 
 from mesos.cli.master import CURRENT as MASTER
@@ -31,5 +32,4 @@ def main(args):
 
     resp = MARATHON.create(txt)
     if resp:
-        r = json.loads(resp)
-        print("{} is now starting up!".format(r.id[1:]))
+        print("{} is now starting up!".format(resp["id"][1:]))
