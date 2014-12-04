@@ -31,4 +31,5 @@ def main(args):
 
     resp = MARATHON.create(txt)
     if resp:
-        cli.json_out(resp)
+        r = json.loads(resp)
+        print("{} is now starting up!".format(r.id[1:]))

@@ -24,6 +24,8 @@ def main(args):
 #    data["env"]["MASTER"] = CFG["master"]
     data["env"]["MASTER"] = "10.8.148.49:5050"
 
-    cli.json_out(MARATHON.create(json.dumps(data)))
+    MARATHON.create(json.dumps(data))
     CFG["installed"].append(args.service)
     CFG.save()
+
+    print("installing {}...".format(args.service))
