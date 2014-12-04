@@ -26,4 +26,4 @@ NODE_CONFIG = {
 def main(args):
     cfg = copy.copy(NODE_CONFIG)
     cfg["num"] = args.number
-    print(fake.start_tasks(service.find("chaos"), cfg))
+    print(fake.start_tasks("http://{0}:8081".format("10.8.148.49", cfg))
