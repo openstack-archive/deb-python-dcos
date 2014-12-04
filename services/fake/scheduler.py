@@ -90,6 +90,8 @@ class FakeScheduler(Scheduler):
 
     # Restart lost tasks based off the last launched task spec
     def statusUpdate(self, driver, status):
+        if os.environ.get("CHAOS", False):
+            return
         if status.state == mesos_pb2.TASK_LOST:
             TASKS.put(self.last)
 
