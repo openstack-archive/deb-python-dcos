@@ -4,7 +4,6 @@ services=(
 "spark"
 "cassandra"
 "kafka"
-"kubernetes"
 "chronos"
 "jenkins"
 "hdfs"
