@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 PROJ_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-CLUSTER_SIZE=10
+CLUSTER_SIZE=20
 
 echo "tearing down dcos demo"
 

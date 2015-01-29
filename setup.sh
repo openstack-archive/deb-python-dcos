@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-CLUSTER_SIZE=10
+CLUSTER_SIZE=20
 
 echo "setting up for dcos demo"
 
