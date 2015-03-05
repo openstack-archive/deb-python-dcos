@@ -66,6 +66,14 @@ class FakeScheduler(Scheduler):
                 driver.declineOffer(offer.id)
                 continue
 
+            if "attrs" in spec:
+                offer_attrs = ["{0}:{1}".format(x.name, x.text.value)
+                    for x in offer.attributes]
+                if len([v for v in spec["attrs"] if not v in offer_attrs]) > 0:
+                    TASKS.put(spec)
+                    driver.declineOffer(offer.id)
+                    continue
+
             self.last = spec
             task = self.make_task(spec, offer)
             print("Launching task on [{0}]".format(offer.hostname))
