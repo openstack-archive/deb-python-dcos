@@ -64,8 +64,9 @@ config = {
             'dcos-uninstall = dcos.cmds.uninstall:main',
 
             # cloud-dial
-            'dcos-clouddial-start = dcos.cmds.clouddial:start',
-            'dcos-clouddial-stop = dcos.cmds.clouddial:stop',
+            'dcos-clouddial-start = dcos.cmds.clouddial.start:main',
+            'dcos-clouddial-stop = dcos.cmds.clouddial.stop:main',
+            'dcos-clouddial-move = dcos.cmds.clouddial.move:main',
 
             # marathon
             'dcos-marathon-config = dcos.cmds.marathon.config:main',
@@ -95,8 +96,12 @@ config = {
             'dcos-spark-stop = dcos.cmds.spark.stop:main',
 
             # chronos
-            'dcos-chronos-start = dcos.cmds.chronos.start:main',
+            'dcos-chronos-run = dcos.cmds.chronos.run:main',
             'dcos-chronos-stop = dcos.cmds.chronos.stop:main',
+
+            # maintenance
+            'dcos-maintenance-start = dcos.cmds.maintenance.start:main',
+            'dcos-maintenance-finish = dcos.cmds.maintenance.finish:main',
         ]
     },
     'setup_requires': [

@@ -17,7 +17,13 @@ parser.add_argument(
     help="json config to use when creating an app"
 )
 
+parser.add_argument(
+    '--location'
+)
+
 @cli.init(parser)
 def main(args):
-    print(fake.start_tasks(service.find("spark"), args.config.read()))
+    location = "http://localhost:7071" # service.find("spark")
+
+    print(fake.start_tasks(location, args.config.read()))
 

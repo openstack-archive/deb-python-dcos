@@ -1,5 +1,5 @@
 {
-  "num": 100,
+  "num": 5,
   "cpus": 0.5,
   "mem": 256,
   "attrs": ["dc:cloud"]

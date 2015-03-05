@@ -19,5 +19,7 @@ parser.add_argument(
 
 @cli.init(parser)
 def main(args):
-    print(fake.start_tasks(service.find("chronos"), args.config.read()))
+    location = "http://localhost:7070" # service.find("spark")
+
+    print(fake.start_tasks(location, args.config.read()))
 

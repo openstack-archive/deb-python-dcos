@@ -12,4 +12,6 @@ parser.add_argument("number", type=int, help="number of nodes to remove")
 
 @cli.init(parser)
 def main(args):
-    print(fake.stop_tasks(service.find("chronos"), args.number))
+    location = "http://localhost:7070" # service.find("spark")
+
+    print(fake.stop_tasks(location, args.number))
