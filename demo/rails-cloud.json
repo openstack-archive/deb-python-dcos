@@ -1,0 +1,13 @@
+{
+  "cmd": "while true; do sleep 100; done",
+  "constraints": [["dc", "LIKE", "cloud"]],
+  "cpus": 0.1,
+  "env": {},
+  "executor": "",
+  "id": "rails-app",
+  "instances": 2,
+  "mem": 512,
+  "disk": 0,
+  "ports": [ ],
+  "uris": [ ]
+}

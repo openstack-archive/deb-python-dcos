@@ -10,6 +10,7 @@ from mesos.cli.master import CURRENT as MASTER
 def start_tasks(base_url, cfg):
     if not isinstance(cfg, str):
         cfg = json.dumps(cfg)
+    print(cfg)
     return requests.post(urlparse.urljoin(base_url, "start"),
         data=cfg).text
 

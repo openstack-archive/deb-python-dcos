@@ -1,12 +1,11 @@
  {
-  "id": "/fwk-spark",
+  "id": "/fwk-chronos",
   "cmd": null,
   "args": [],
   "user": null,
   "env": {
-    "NAME": "spark",
-    "VERSION": "1.1.0",
-    "SHORT": "1"
+    "NAME": "chronos",
+    "VERSION": "0.5"
   },
   "instances": 1,
   "cpus": 0.1,

@@ -24,6 +24,6 @@ def main(args):
     )
 
     for fw in MASTER.frameworks(active_only=True):
-        tb.add_row(fw["name"].split('-', 1))
+        tb.add_row([fw["name"], "0.0"])
 
     print(tb)

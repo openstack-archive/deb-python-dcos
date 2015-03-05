@@ -15,14 +15,14 @@ parser = cli.parser(
 )
 
 parser.add_argument(
-    "service", choices=registry.names() + [ "chaos" ]
+    "service" 
 )
 
 @cli.init(parser)
 def main(args):
     data = json.loads(util.get_data("{0}.json".format(args.service)))
 #    data["env"]["MASTER"] = CFG["master"]
-    data["env"]["MASTER"] = "10.8.148.49:5050"
+    data["env"]["MASTER"] = "10.0.0.4:5050"
 
     MARATHON.create(json.dumps(data))
     CFG["installed"].append(args.service)
