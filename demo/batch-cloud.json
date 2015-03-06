@@ -1,6 +1,6 @@
 {
   "num": 5,
-  "cpus": 0.5,
+  "cpus": 0.1,
   "mem": 256,
   "attrs": ["dc:cloud"]
 }

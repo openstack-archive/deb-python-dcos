@@ -26,11 +26,9 @@ parser.add_argument(
 @cli.init(parser)
 def main(args):
 
-    if args.workload == "marathon" and args.location == "azure":
+    if args.workload == "all" and args.location == "azure":
         os.system(
             "dcos marathon update rails-app demo/rails-cloud.json > /dev/null")
-
-    if args.workload == "chronos" and args.location == "azure":
         os.system(
             "dcos chronos stop 5 && dcos chronos run demo/batch-cloud.json > /dev/null")
 
