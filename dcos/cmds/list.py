@@ -23,7 +23,16 @@ def main(args):
         right_padding_width=1
     )
 
+    tb.align["Name"] = "l"
+    tb.align["Version"] = "l"
+
     for fw in MASTER.frameworks(active_only=True):
-        tb.add_row(fw["name"].split('-', 1))
+        if '-' in fw["name"]:
+            tb.add_row(fw["name"].split('-',1))
+        else:
+            tb.add_row([fw["name"],"0.0.1"])
+
+#    for fw in MASTER.frameworks(active_only=True):
+#        tb.add_row(fw["name"].split('-', 1))
 
     print(tb)

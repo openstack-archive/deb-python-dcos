@@ -17,8 +17,12 @@ services=(
 "chaos"
 )
 
-echo "uninstalling services"
+echo "Uninstalling services..."
 for service in "${services[@]}"
 do
-	dcos uninstall $service
+	echo "uninstalling service: $service"
+	{
+	  dcos uninstall $service
+	} &> /dev/null
 done
+echo "Demo services Uninstalled!"

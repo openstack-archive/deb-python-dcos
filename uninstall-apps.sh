@@ -5,8 +5,12 @@ apps=(
 "nginx"
 )
 
-echo "uninstalling apps"
+echo "Uninstalling apps..."
 for app in "${apps[@]}"
 do
-	dcos marathon destroy $app
+	echo "uninstalling app: $app"
+	{
+	  dcos marathon destroy $app
+	} &> /dev/null
 done
+echo "Demo Apps Uninstalled!"
