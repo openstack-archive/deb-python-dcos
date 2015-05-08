@@ -657,7 +657,7 @@ def test_bad_configuration():
     assert stdout == b''
     assert stderr.decode().startswith(
         "Marathon likely misconfigured. Please check your proxy or "
-        "Marathon URI settings. See dcos config --help. ")
+        "Marathon URL settings. See dcos config --help. ")
 
     assert_command(['dcos', 'config', 'unset', 'marathon.url'])
 

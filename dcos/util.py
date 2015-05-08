@@ -101,17 +101,23 @@ def read_file(path):
         return file_.read()
 
 
+CONFIG = None
+
+
 def get_config():
     """
     :returns: Configuration object
     :rtype: Toml
     """
+    global CONFIG
+    if CONFIG is None:
+        # avoid circular import
+        from dcos import config
 
-    # avoid circular import
-    from dcos import config
+        CONFIG = config.load_from_path(
+            os.environ[constants.DCOS_CONFIG_ENV])
 
-    return config.load_from_path(
-        os.environ[constants.DCOS_CONFIG_ENV])
+    return CONFIG
 
 
 def get_config_vals(config, keys):
