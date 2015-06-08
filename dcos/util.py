@@ -454,10 +454,11 @@ def duration(fn):
         try:
             return fn(*args, **kwargs)
         finally:
-            logger.debug("duration: {0}.{1}: {2:2.2f}s".format(
-                fn.__module__,
-                fn.__name__,
-                time.time() - start))
+            pass
+            # logger.debug("duration: {0}.{1}: {2:2.2f}s".format(
+            #     fn.__module__,
+            #     fn.__name__,
+            #     time.time() - start))
 
     return timer
 

@@ -76,20 +76,20 @@ def request(method,
                 headers={'Accept': 'application/json'},
                 **kwargs)
 
-        logger.info(
-            'Sending HTTP [%r] to [%r]: %r',
-            request.method,
-            request.url,
-            request.headers)
+        # logger.info(
+        #     'Sending HTTP [%r] to [%r]: %r',
+        #     request.method,
+        #     request.url,
+        #     request.headers)
 
         with requests.Session() as session:
             response = session.send(request.prepare(), timeout=timeout)
     except Exception as ex:
         raise to_exception(ex)
 
-    logger.info('Received HTTP response [%r]: %r',
-                response.status_code,
-                response.text)
+    # logger.info('Received HTTP response [%r]: %r',
+    #             response.status_code,
+    #             response.text)
 
     if is_success(response.status_code):
         return response

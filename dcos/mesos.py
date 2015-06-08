@@ -134,6 +134,7 @@ class Master(object):
         :returns: slave's base url
         :rtype: str
         """
+
         if self._mesos_master_url is not None:
             slave_ip = slave['pid'].split('@')[1]
             return 'http://{}'.format(slave_ip)
@@ -351,7 +352,7 @@ class Slave(object):
         :rtype: [dict]
         """
 
-        return _merge(self._state, ['frameworks', 'completed_frameworks'])
+        return _merge(self.state(), ['frameworks', 'completed_frameworks'])
 
     def executor_dicts(self):
         """Returns the executor dictionaries from the state.json
@@ -391,6 +392,17 @@ class Framework(object):
         self._master = master
         self._tasks = {}  # id->Task map
 
+    def tasks(self, fltr="", completed=False):
+        keys = ['tasks']
+        if completed:
+            keys.append('completed_tasks')
+
+        tasks = []
+        for task in _merge(self._framework, keys):
+            if fltr in task['id']:
+                tasks.append(self._task_obj(task))
+        return tasks
+
     def task(self, task_id):
         """Returns a task by id
 
@@ -400,10 +412,13 @@ class Framework(object):
         :rtype: Task
         """
 
-        for task in _merge(self._framework, ['tasks', 'completed_tasks']):
-            if task['id'] == task_id:
-                return self._task_obj(task)
-        return None
+        tasks = self.tasks(task_id, True)
+        if len(tasks) != 1:
+            raise Exception
+        return tasks[0]
+
+    def dict(self):
+        return self._framework
 
     def _task_obj(self, task):
         """Returns the Task object corresponding to the provided `task`
@@ -418,9 +433,6 @@ class Framework(object):
         if task['id'] not in self._tasks:
             self._tasks[task['id']] = Task(task, self._master)
         return self._tasks[task['id']]
-
-    def dict(self):
-        return self._framework
 
     def __getitem__(self, name):
         """Support the framework[attr] syntax
@@ -550,7 +562,10 @@ class MesosFile(object):
     :type path: str
     """
 
-    def __init__(self, task, path):
+    def __init__(self, path, task=None, host=None):
+        assert host or task
+
+        self._host = host or task.slave()
         self._task = task
         self._path = path
         self._cursor = 0
@@ -621,11 +636,14 @@ class MesosFile(object):
         :rtype: str
         """
 
-        directory = self._task.directory()
-        if directory[-1] == '/':
-            return directory + self._path
+        if self._task:
+            directory = self._task.directory()
+            if directory[-1] == '/':
+                return directory + self._path
+            else:
+                return directory + '/' + self._path
         else:
-            return directory + '/' + self._path
+            return self._path
 
     def _params(self, length, offset=None):
         """GET parameters to send to files/read.json.  See the MesosFile
@@ -678,9 +696,14 @@ class MesosFile(object):
         :rtype: dict
         """
 
-        read_url = MesosClient().slave_url(self._task.slave()['id'],
-                                           'files/read.json')
-        return http.get(read_url, params=params).json()
+        if isinstance(self._host, Slave):
+            url = MesosClient().slave_url(self._host['id'],
+                                        'files/read.json')
+        else:
+            url = MesosClient().master_url('files/read.json')
+
+        resp = http.get(url, params=params)
+        return resp.json()
 
     def __str__(self):
         """String representation of the file: <task_id:file_path>

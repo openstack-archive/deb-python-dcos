@@ -156,7 +156,7 @@ def _track_err(pool, exit_code, err, conf):
     # Segment.io calls are async, but rollbar is not, so for
     # parallelism, we must call segment first.
     _segment_track_err(pool, conf, err, exit_code)
-    _rollbar_track_err(conf, err, exit_code)
+    #_rollbar_track_err(conf, err, exit_code)
 
 
 def _segment_track_cli(pool, conf):

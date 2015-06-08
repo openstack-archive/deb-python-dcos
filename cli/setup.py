@@ -98,6 +98,7 @@ setup(
             'dcos-service=dcoscli.service.main:main',
             'dcos-task=dcoscli.task.main:main',
             'dcos-tail=dcoscli.tail.main:main',
+            'dcos-fs=dcoscli.fs.main:main',
         ],
     },
 
