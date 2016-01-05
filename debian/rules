@@ -23,16 +23,13 @@ override_dh_auto_install:
 override_dh_auto_test:
 ifeq (,$(findstring nocheck, $(DEB_BUILD_OPTIONS)))
 	set -e ; for pyvers in $(PYTHONS) $(PYTHON3S); do \
-		python$$pyvers setup.py test ; \
+		python$$pyvers -m pytest -p no:cacheprovider tests ; \
 	done
 endif
-
-
 
 override_dh_clean:
 	dh_clean -O--buildsystem=python_distutils
 	rm -rf build
-
 
 # Commands not to run
 override_dh_installcatalogs:
@@ -43,4 +40,3 @@ override_dh_installpam override_dh_installppp override_dh_installudev override_d
 override_dh_installxfonts override_dh_gconf override_dh_icons override_dh_perl override_dh_usrlocal:
 override_dh_installcron override_dh_installdebconf:
 override_dh_installlogrotate override_dh_installgsettings:
-
