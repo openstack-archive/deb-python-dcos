@@ -1,0 +1,5 @@
+python-dcos (0.2.0-1) unstable; urgency=medium
+
+  * Initial release. (Closes: #809996)
+
+ -- Thomas Goirand <zigo@debian.org>  Mon, 04 Jan 2016 17:27:51 +0800

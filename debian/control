@@ -1,0 +1,80 @@
+Source: python-dcos
+Section: python
+Priority: optional
+Maintainer: PKG OpenStack <openstack-devel@lists.alioth.debian.org>
+Uploaders: Thomas Goirand <zigo@debian.org>,
+Build-Depends: debhelper (>= 9),
+               dh-python,
+               openstack-pkg-tools,
+               python-all,
+               python-setuptools,
+               python3-all,
+               python3-setuptools,
+Build-Depends-Indep: python-git,
+Standards-Version: 3.9.6
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=openstack/python-dcos.git
+Vcs-Git: git://anonscm.debian.org/openstack/python-dcos.git
+Homepage: https://github.com/mesosphere/dcos-cli
+
+Package: python-dcos
+Architecture: all
+Depends: python-git,
+         python-jsonschema,
+         python-pager,
+         python-portalocker,
+         python-pygments,
+         python-pystache,
+         python-requests,
+         python-six (>= 1.9),
+         python-toml,
+         python-concurrent.futures,
+         python-prettytable,
+         ${misc:Depends},
+         ${python:Depends},
+Description: Datacenter Operating System (DCOS) CLI - Python 2.7
+ The DCOS Command Line Interface (CLI) is a command line utility that provides
+ a user-friendly yet powerful way to manage DCOS installations. You can use the
+ Mesosphere DCOS command-line interface (CLI) to remotely manage your cluster,
+ install software packages, and inspect the cluster state. With the DCOS CLI
+ you can:
+  * Find and install packages from DCOS Universe and Multiverse.
+  * Uninstall DCOS services.
+  * Administer the DCOS init process, Marathon.
+  * Install and uninstall subcommands that extend and add functionality to the
+    DCOS CLI.
+ .
+ After you install the CLI, you can use it through a bash shell on Unix/Linux
+ systems or PowerShell on a Windows system.
+ .
+ This package contains the Python 2.7 module.
+
+Package: python3-dcos
+Architecture: all
+Depends: python3-git,
+         python3-jsonschema,
+         python3-pager,
+         python3-portalocker,
+         python3-pygments,
+         python3-pystache,
+         python3-requests,
+         python3-six (>= 1.9),
+         python3-toml,
+         python3-prettytable,
+         ${misc:Depends},
+         ${python3:Depends},
+Description: DCOS Common Modules - Python 3.x
+ The DCOS Command Line Interface (CLI) is a command line utility that provides
+ a user-friendly yet powerful way to manage DCOS installations. You can use the
+ Mesosphere DCOS command-line interface (CLI) to remotely manage your cluster,
+ install software packages, and inspect the cluster state. With the DCOS CLI
+ you can:
+  * Find and install packages from DCOS Universe and Multiverse.
+  * Uninstall DCOS services.
+  * Administer the DCOS init process, Marathon.
+  * Install and uninstall subcommands that extend and add functionality to the
+    DCOS CLI.
+ .
+ After you install the CLI, you can use it through a bash shell on Unix/Linux
+ systems or PowerShell on a Windows system.
+ .
+ This package contains the Python 3.x module.
