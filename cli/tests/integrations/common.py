@@ -66,9 +66,9 @@ def assert_command(
     :param returncode: Expected return code
     :type returncode: int
     :param stdout: Expected stdout
-    :type stdout: str
+    :type stdout: bytes
     :param stderr: Expected stderr
-    :type stderr: str
+    :type stderr: bytes
     :param env: Environment variables
     :type env: dict of str to str
     :param stdin: File to use for stdin
@@ -472,20 +472,40 @@ def file_bytes(path):
         return six.b(f.read())
 
 
+def file_json_ast(path):
+    """Returns the JSON AST parsed from file
+
+    :param path: path to file
+    :type path: str
+    :returns: parsed JSON AST
+    """
+    with open(path) as f:
+        return json.load(f)
+
+
+def json_ast_format(ast):
+    """Returns the given JSON AST formatted as bytes
+
+    :param ast: JSON AST
+    :returns: formatted JSON
+    :rtype: bytes
+    """
+    return six.b(
+        json.dumps(ast,
+                   sort_keys=True,
+                   indent=2,
+                   separators=(',', ': '))) + b'\n'
+
+
 def file_json(path):
     """ Returns formatted json from file
 
     :param path: path to file
     :type path: str
-    :returns: formatted json as a string
+    :returns: formatted json
     :rtype: bytes
     """
-    with open(path) as f:
-        return six.b(
-            json.dumps(json.load(f),
-                       sort_keys=True,
-                       indent=2,
-                       separators=(',', ': '))) + b'\n'
+    return json_ast_format(file_json_ast(path))
 
 
 @contextlib.contextmanager
