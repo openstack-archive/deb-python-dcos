@@ -18,10 +18,15 @@ from ..common import file_bytes
 
 
 def setup_module(module):
+    # add universe-server with static packages
+    assert_command(
+        ['dcos', 'marathon', 'app', 'add', 'tests/data/universe-v3-stub.json'])
+
     assert_command(
         ['dcos', 'package', 'repo', 'remove', 'Universe'])
-    repo = "https://github.com/mesosphere/universe/archive/cli-test-4.zip"
-    assert_command(['dcos', 'package', 'repo', 'add', 'test4', repo])
+
+    repo = "http://universe.marathon.mesos:8085/repo"
+    assert_command(['dcos', 'package', 'repo', 'add', 'test-universe', repo])
 
 
 def teardown_module(module):
@@ -31,9 +36,10 @@ def teardown_module(module):
             service_shutdown(framework['id'])
 
     assert_command(
-        ['dcos', 'package', 'repo', 'remove', 'test4'])
+        ['dcos', 'package', 'repo', 'remove', 'test-universe'])
     repo = "https://universe.mesosphere.com/repo"
     assert_command(['dcos', 'package', 'repo', 'add', 'Universe', repo])
+    assert_command(['dcos', 'marathon', 'app', 'remove', 'universe'])
 
 
 @pytest.fixture(scope="module")
@@ -70,7 +76,7 @@ def test_update_deprecation_notice():
 
 def test_repo_list():
     repo_list = b"""\
-test4: https://github.com/mesosphere/universe/archive/cli-test-4.zip
+test-universe: http://universe.marathon.mesos:8085/repo
 """
     assert_command(['dcos', 'package', 'repo', 'list'], stdout=repo_list)
 
@@ -83,43 +89,41 @@ def test_repo_list_json():
 
 
 def test_repo_add():
-    repo = \
-        "https://github.com/mesosphere/universe/archive/cli-test-3.zip"
+    repo = "https://universe.mesosphere.com/repo"
     repo_list = b"""\
-test4: https://github.com/mesosphere/universe/archive/cli-test-4.zip
-test: https://github.com/mesosphere/universe/archive/cli-test-3.zip
+test-universe: http://universe.marathon.mesos:8085/repo
+universe: https://universe.mesosphere.com/repo
 """
-    args = ["test", repo]
+    args = ["universe", repo]
     _repo_add(args, repo_list)
 
 
 def test_repo_add_index():
-    repo = \
-        "https://github.com/mesosphere/universe/archive/cli-test-2.zip"
+    repo = "http://universe.mesosphere.com/repo-1.7"
     repo_list = b"""\
-test4: https://github.com/mesosphere/universe/archive/cli-test-4.zip
-test2: https://github.com/mesosphere/universe/archive/cli-test-2.zip
-test: https://github.com/mesosphere/universe/archive/cli-test-3.zip
+test-universe: http://universe.marathon.mesos:8085/repo
+1.7-universe: http://universe.mesosphere.com/repo-1.7
+universe: https://universe.mesosphere.com/repo
 """
-    args = ["test2", repo, '--index=1']
+    args = ["1.7-universe", repo, '--index=1']
     _repo_add(args, repo_list)
 
 
 def test_repo_remove():
     repo_list = b"""\
-test4: https://github.com/mesosphere/universe/archive/cli-test-4.zip
-test2: https://github.com/mesosphere/universe/archive/cli-test-2.zip
+test-universe: http://universe.marathon.mesos:8085/repo
+universe: https://universe.mesosphere.com/repo
 """
-    _repo_remove(['test'], repo_list)
+    _repo_remove(['1.7-universe'], repo_list)
     repo_list = b"""\
-test4: https://github.com/mesosphere/universe/archive/cli-test-4.zip
+test-universe: http://universe.marathon.mesos:8085/repo
 """
-    _repo_remove(['test2'], repo_list)
+    _repo_remove(['universe'], repo_list)
 
 
 def test_repo_empty():
     assert_command(
-        ['dcos', 'package', 'repo', 'remove', 'test4'])
+        ['dcos', 'package', 'repo', 'remove', 'test-universe'])
 
     returncode, stdout, stderr = exec_command(
         ['dcos', 'package', 'repo', 'list'])
@@ -129,12 +133,11 @@ def test_repo_empty():
     assert stdout == b''
     assert stderr == stderr_msg
 
-    repo = \
-        "https://github.com/mesosphere/universe/archive/cli-test-4.zip"
+    repo = "http://universe.marathon.mesos:8085/repo"
     repo_list = b"""\
-test4: https://github.com/mesosphere/universe/archive/cli-test-4.zip
+test-universe: http://universe.marathon.mesos:8085/repo
 """
-    _repo_add(["test4", repo], repo_list)
+    _repo_add(["test-universe", repo], repo_list)
 
 
 def test_describe_nonexistent():
@@ -423,8 +426,7 @@ def test_package_metadata():
         ]
     }
 
-    expected_source = b"""https://github.com/mesosphere/universe/archive/\
-cli-test-4.zip"""
+    expected_source = b"""http://universe.marathon.mesos:8085/repo"""
 
     expected_labels = {
         'DCOS_PACKAGE_REGISTRY_VERSION': b'2.0',

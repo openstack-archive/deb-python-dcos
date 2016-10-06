@@ -17,19 +17,24 @@ from ..fixtures.service import framework_fixture
 
 
 def setup_module(module):
-    exec_command(
-        ['dcos', 'package', 'repo', 'remove', 'Universe'])
-    repo = "https://github.com/mesosphere/universe/archive/cli-test-4.zip"
-    assert_command(['dcos', 'package', 'repo', 'add', 'test4', repo])
+    # add universe-server with static packages
+    assert_command(
+        ['dcos', 'marathon', 'app', 'add', 'tests/data/universe-v3-stub.json'])
+
+    exec_command(['dcos', 'package', 'repo', 'remove', 'Universe'])
+
+    repo = "http://universe.marathon.mesos:8085/repo"
+    assert_command(['dcos', 'package', 'repo', 'add', 'test-universe', repo])
 
 
 def teardown_module(module):
     delete_zk_nodes()
 
-    assert_command(
-        ['dcos', 'package', 'repo', 'remove', 'test4'])
+    assert_command(['dcos', 'package', 'repo', 'remove', 'test-universe'])
+
     repo = "https://universe.mesosphere.com/repo"
     assert_command(['dcos', 'package', 'repo', 'add', 'Universe', repo])
+    assert_command(['dcos', 'marathon', 'app', 'remove', 'universe'])
 
 
 def test_help():
