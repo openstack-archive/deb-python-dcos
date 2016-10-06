@@ -31,6 +31,15 @@ NUM_TASKS = len(INIT_APPS)
 
 
 def setup_module():
+    # verify no tasks and no tasks behavior
+    assert_command(["dcos", "task", "log"],
+                   stderr=b'No tasks found. Exiting.\n',
+                   returncode=1)
+    assert_command(["dcos", "task", "ls"],
+                   stderr=b'No tasks found\n',
+                   returncode=1)
+    assert_command(["dcos", "task"])
+
     # create a completed task
     with app(SLEEP_COMPLETED, 'test-app-completed'):
         pass
