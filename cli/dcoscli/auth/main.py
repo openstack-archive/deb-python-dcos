@@ -1,9 +1,10 @@
+import os
 import docopt
-from six.moves import urllib
 
 import dcoscli
-from dcos import cmds, config, emitting, http, util
-from dcos.errors import DCOSAuthorizationException, DCOSException
+from dcos import auth, cmds, config, emitting, http, util
+from dcos.errors import DCOSException
+from dcoscli import tables
 from dcoscli.subcommand import default_command_info, default_doc
 from dcoscli.util import decorate_docopt_usage
 
@@ -40,8 +41,14 @@ def _cmds():
 
     return [
         cmds.Command(
-            hierarchy=['auth', 'login'],
+            hierarchy=['auth', 'list-providers'],
             arg_keys=[],
+            function=_list_providers),
+
+        cmds.Command(
+            hierarchy=['auth', 'login'],
+            arg_keys=['--password', '--password-env', '--password-file',
+                      '--provider', '--username', '--service-key'],
             function=_login),
 
         cmds.Command(
@@ -68,29 +75,69 @@ def _info(info):
     return 0
 
 
-def _login():
+def _list_providers(json_):
+    """
+    :returns: providers available for configured cluster
+    :rtype: dict
+    """
+
+    providers = auth.get_providers()
+    if providers or json_:
+        emitting.publish_table(
+            emitter, providers, tables.auth_providers_table, json_)
+    else:
+        raise DCOSException("No providers configured for your cluster")
+
+
+def _get_password(password_str, password_env, password_file):
+    """
+    Get password for authentication
+
+    :param password_str: password
+    :type password_str: str
+    :param password_env: name of environment variable with password
+    :type password_env: str
+    :param password_file: path to file with password
+    :type password_file: bool
+    :returns: password or None if no password specified
+    :rtype: str | None
+    """
+
+    password = None
+    if password_str:
+        password = password_str
+    elif password_env:
+        password = os.environ.get(password_env)
+    elif password_file:
+        password = util.read_file(password_file)
+    return password
+
+
+def _login(password_str, password_env, password_file,
+           provider, username, service_key):
     """
     :returns: process status
     :rtype: int
     """
 
-    # every call to login will generate a new token if applicable
-    _logout()
     dcos_url = config.get_config_val("core.dcos_url")
     if dcos_url is None:
         msg = ("Please provide the url to your DC/OS cluster: "
                "`dcos config set core.dcos_url`")
         raise DCOSException(msg)
 
-    # hit protected endpoint which will prompt for auth if cluster has auth
-    try:
-        endpoint = '/pkgpanda/active.buildinfo.full.json'
-        url = urllib.parse.urljoin(dcos_url, endpoint)
-        http.request_with_auth('HEAD', url)
-    # if the user is authenticated, they have effectively "logged in" even if
-    # they are not authorized for this endpoint
-    except DCOSAuthorizationException:
-        pass
+    # every call to login will generate a new token if applicable
+    _logout()
+
+    password = _get_password(password_str, password_env, password_file)
+    if provider is None:
+        if password and username:
+            auth.get_dcostoken_by_dcos_uid_password_auth(
+                dcos_url, username, password)
+        else:
+            auth.header_challenge_auth(dcos_url)
+    else:
+        raise DCOSException("Providers interface not implemented")
 
     emitter.publish("Login successful!")
     return 0
