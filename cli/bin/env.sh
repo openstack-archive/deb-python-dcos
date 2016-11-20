@@ -4,7 +4,7 @@ BASEDIR=`dirname $0`/..
 
 if [ ! -d "$BASEDIR/env" ]; then
 
-    pyvenv-3.4 $BASEDIR/env
+    pyvenv $BASEDIR/env
     echo "Virtualenv created."
 
     if [ -f "$BASEDIR/env/bin/activate" ]; then

@@ -8,6 +8,7 @@ import zipfile
 
 import docopt
 import pkg_resources
+import requests
 import six
 
 import dcoscli
@@ -49,6 +50,11 @@ def _cmds():
     """
 
     return [
+        cmds.Command(
+            hierarchy=['package', 'add'],
+            arg_keys=[],
+            function=_add),
+
         cmds.Command(
             hierarchy=['package', 'update'],
             arg_keys=[],
@@ -107,6 +113,43 @@ def _cmds():
             arg_keys=['--config-schema', '--info'],
             function=_package),
     ]
+
+
+def read_in_chunks(file_object, chunk_size=1024):
+    while True:
+        data = file_object.read(chunk_size)
+        if not data:
+            break
+        yield data
+
+
+def _add():
+    """
+    """
+    filename = '/home/jose/package.dcos'
+    with open(filename, 'rb') as content:
+        size = os.path.getsize(filename)
+        url = '{}cosmos/package/add'.format(get_cosmos_url())
+
+        response = requests.post(
+            url,
+            headers={
+                'x-dcos-content-length': str(size),
+                'accept': (
+                    'application/vnd.dcos.package.add-response+json;'
+                    'charset=utf-8;version=v1'
+                ),
+                'content-type': (
+                    'application/vnd.dcos.universe.package+zip;'
+                    'version=v1'
+                )
+            },
+            data=read_in_chunks(content)
+        )
+
+        print(response)
+
+    return 0
 
 
 def _package(config_schema, info):

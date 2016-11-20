@@ -5,6 +5,7 @@ Usage:
     dcos package --config-schema
     dcos package --help
     dcos package --info
+    dcos package add
     dcos package build [--output-directory=<output-directory>] <build-definition>
     dcos package describe [--app --cli --config]
                           [--render]
