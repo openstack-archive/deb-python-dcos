@@ -148,6 +148,8 @@ def _add():
         )
 
         print(response)
+        print(response.headers)
+        print(response.content)
 
     return 0
 
