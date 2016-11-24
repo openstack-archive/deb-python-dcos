@@ -1,3 +1,12 @@
+========================
+Team and repository tags
+========================
+
+.. image:: http://governance.openstack.org/badges/deb-python-dcos.svg
+    :target: http://governance.openstack.org/reference/tags/index.html
+
+.. Change things from this point on
+
 DC/OS Command Line Interface
 ===========================
 The DC/OS Command Line Interface (CLI) is a cross-platform command line utility
