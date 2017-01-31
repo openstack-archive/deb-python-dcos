@@ -69,7 +69,9 @@ def test_get_missing_property(env):
 def test_dcos_url_without_scheme(env):
     old = b'http://dcos.snakeoil.mesosphere.com'
     new = b"abc.com"
-    out = b"[core.dcos_url]: changed from '%b' to 'https://%b'\n" % (old, new)
+    out = b"[core.dcos_url]: changed from '%b' to 'https://%b'" % (old, new)
+    out += b"\n[core.dcos_acs_token]: removed\n"
+    out += b"Please run `dcos auth login` to authenticate to new dcos_url\n"
     assert_command(
             ['dcos', 'config', 'set', 'core.dcos_url', new.decode('utf-8')],
             returncode=0,
