@@ -192,8 +192,8 @@ def get_clusters():
     :rtype: [Clusters]
     """
 
-    for (_, dirnames, _) in os.walk(config.get_clusters_path()):
-        return [Cluster(cluster_id) for cluster_id in dirnames]
+    clusters = os.listdir(config.get_clusters_path())
+    return [Cluster(cluster_id) for cluster_id in clusters]
 
 
 def get_cluster(name):
