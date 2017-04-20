@@ -182,8 +182,13 @@ def get_cluster_cert(dcos_url):
         with urlopen(cert_bundle_url, context=unverified) as f:
             return f.read().decode('utf-8')
     except Exception as e:
-        msg = "Error downloading CA cert from cluster"
-        raise DCOSException("{}:\n{}".format(msg, e))
+        # DC/OS open clusters do not have certs
+        if e.code == 404:
+            return False
+        msg = ("Error downloading CA certificate from cluster. "
+               "Please check the provided DC/OS URL.")
+        logger.debug(e)
+        raise DCOSException(msg)
 
 
 def get_clusters():
