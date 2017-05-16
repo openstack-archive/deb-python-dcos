@@ -68,7 +68,30 @@ function install_cli() {
   echo "${INSTALL_PATH}"
 }
 
-if [ "$#" -lt 1 ]; then
+function detect_cli_version() {
+  dcos --version | grep dcoscli.version | cut -d '=' -f 2
+}
+
+# return 0 if version A >= version B using semanatic versioning
+function semver_gte() {
+  VERISON_A="${1}"
+  VERISON_B="${2}"
+  SEMVER_PATTERN="[^0-9]*\([0-9][0-9]*\)[.]\([0-9][0-9]*\)[.]\([0-9][0-9]*\).*"
+  SEG1_A="$(echo "${VERISON_A}" | sed -e "s#${SEMVER_PATTERN}#\1#")"
+  SEG1_B="$(echo "${VERISON_B}" | sed -e "s#${SEMVER_PATTERN}#\1#")"
+  [[ ${SEG1_A} < ${SEG1_B} ]] && return 1
+  [[ ${SEG1_A} > ${SEG1_B} ]] && return 0
+  SEG2_A="$(echo "${VERISON_A}" | sed -e "s#${SEMVER_PATTERN}#\2#")"
+  SEG2_B="$(echo "${VERISON_B}" | sed -e "s#${SEMVER_PATTERN}#\2#")"
+  [[ ${SEG2_A} < ${SEG2_B} ]] && return 1
+  [[ ${SEG2_A} > ${SEG2_B} ]] && return 0
+  SEG3_A="$(echo "${VERISON_A}" | sed -e "s#${SEMVER_PATTERN}#\3#")"
+  SEG3_B="$(echo "${VERISON_B}" | sed -e "s#${SEMVER_PATTERN}#\3#")"
+  [[ ${SEG3_A} < ${SEG3_B} ]] && return 1
+  return 0
+}
+
+if [[ "$#" -lt 1 ]]; then
   usage;
   exit 1;
 fi
@@ -101,13 +124,17 @@ DOWNLOAD_PATH="$(download_cli "${CLI_DIR}")"
 echo >&2 "Installing..."
 INSTALL_PATH="$(install_cli "${DOWNLOAD_PATH}" "${INSTALL_DIR_PATH}")"
 
-echo >&2 "Configuring..."
-echo >&2 "Config: core.dcos_url=${DCOS_URL}"
-dcos config set core.dcos_url "${DCOS_URL}"
+CLI_VERSION="$(detect_cli_version)"
+echo >&2 "CLI Version: ${CLI_VERSION}"
 
-# Log CLI & Cluster versions
-echo >&2 "dcos --version"
-dcos --version >&2
+echo >&2 "Configuring CLI..."
+if semver_gte "${CLI_VERSION}" "0.5.0"; then
+  echo >&2 "dcos cluster setup ${DCOS_URL}"
+  dcos cluster setup "${DCOS_URL}"
+else
+  echo >&2 "dcos config set core.dcos_url ${DCOS_URL}"
+  dcos config set core.dcos_url "${DCOS_URL}"
+fi
 
 # Print install path to STDOUT to enable script chaining
 echo >&2 "Install Path:"
