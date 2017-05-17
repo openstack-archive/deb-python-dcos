@@ -11,7 +11,7 @@ pipeline {
   }
   stages {
     stage('Create CCM Cluster') {
-      agent 'mesos'
+      agent { label 'mesos' }
       steps {
         checkout scm
         sh 'docker build -f cli/binary/Dockerfile.linux-binary -t linux-binary:${env.BUILD_NUMBER} .'
@@ -45,7 +45,7 @@ pipeline {
       }
     }
     stage('Test Install Script (Linux)') {
-      agent 'mesos'
+      agent { label 'mesos' }
       steps {
         checkout scm
         unstash 'ccm'
@@ -60,7 +60,7 @@ pipeline {
       }
     }
     stage('Test Install Script (Mac)') {
-      agent 'Mac'
+      agent { label 'mac' }
       steps {
         checkout scm
         unstash 'ccm'
