@@ -97,28 +97,28 @@ pipeline {
            '''
       }
     }
-    post {
-      always {
-        checkout scm
-        unstash 'ccm'
-        sh '''#!/usr/bin/env bash
-           set -o errexit -o nounset -o pipefail
+  }
+  post {
+    always {
+      checkout scm
+      unstash 'ccm'
+      sh '''#!/usr/bin/env bash
+         set -o errexit -o nounset -o pipefail
 
-           CLUSTER_ID="$(cat .stash-cluster-id)"
-           [[ -z "${CLUSTER_ID}" ]] && echo >&2 "No cluster to destroy (empty CLUSTER_ID). Failing build..." && exit 1
+         CLUSTER_ID="$(cat .stash-cluster-id)"
+         [[ -z "${CLUSTER_ID}" ]] && echo >&2 "No cluster to destroy (empty CLUSTER_ID). Failing build..." && exit 1
 
-           echo "Building docker image..."
-           docker build -f ccm/Dockerfile -t ccm:${BUILD_NUMBER} .
+         echo "Building docker image..."
+         docker build -f ccm/Dockerfile -t ccm:${BUILD_NUMBER} .
 
-           echo "Deleting CCM Cluster..."
-           docker run \
-               --rm=true \
-               --env CLUSTER_ID="${CLUSTER_ID}" \
-               --env CCM_AUTH_TOKEN="${CCM_AUTH_TOKEN}" \
-               ccm:${BUILD_NUMBER} \
-               delete_ccm_cluster.sh
-           '''
-      }
+         echo "Deleting CCM Cluster..."
+         docker run \
+             --rm=true \
+             --env CLUSTER_ID="${CLUSTER_ID}" \
+             --env CCM_AUTH_TOKEN="${CCM_AUTH_TOKEN}" \
+             ccm:${BUILD_NUMBER} \
+             delete_ccm_cluster.sh
+         '''
     }
   }
 }
