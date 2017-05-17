@@ -1,6 +1,7 @@
 #!/usr/bin/env groovy
 
 pipeline {
+  agent { label 'mesos' }
   parameters {
     string name: 'DCOS_CHANNEL', description: 'DC/OS Release Channel', defaultValue: 'testing/master'
     string name: 'CF_TEMPLATE_URL', description: 'CloudFormation Template URL', defaultValue: ''
@@ -90,7 +91,7 @@ pipeline {
       }
     }
     stage('Destroy CCM Cluster') {
-      agent 'mesos'
+      agent { label 'mesos' }
       steps {
         checkout scm
         unstash 'ccm'
