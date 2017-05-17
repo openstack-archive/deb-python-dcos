@@ -8,7 +8,7 @@ set -o errexit -o nounset -o pipefail
 
 # wait for cluster to come up
 while true; do
-    RESPONSE_JSON="$(http --ignore-stdin --check-status --follow \
+    RESPONSE_JSON="$(http --ignore-stdin --follow \
                   https://ccm.mesosphere.com/api/cluster/${CLUSTER_ID}/ \
                   Authorization:"Token ${CCM_AUTH_TOKEN}")"
     STATUS="$(echo "${RESPONSE_JSON}" | jq -r ".status")"
