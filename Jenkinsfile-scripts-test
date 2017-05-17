@@ -22,7 +22,7 @@ pipeline {
         sh '''#!/usr/bin/env bash
            set -o errexit -o nounset -o pipefail
            if [[ -z "${CF_TEMPLATE_URL:-}" ]] && [[ -z "${CF_TEMPLATE_NAME:-}" ]]; then
-             echo >&2 "Blank CF_TEMPLATE_URL and CF_TEMPLATE_NAME are blank, but one must be provided. Failing build..."
+             echo >&2 "Both CF_TEMPLATE_URL and CF_TEMPLATE_NAME are blank, but one must be provided. Failing build..."
              exit 1
            fi
            CLUSTER_ID="$(docker run \
