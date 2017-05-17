@@ -9,6 +9,9 @@ pipeline {
   }
   environment {
     CCM_AUTH_TOKEN = credentials('8e2b2400-0f14-4e4d-b319-e1360f97627d')
+    DCOS_CHANNEL = params.DCOS_CHANNEL
+    CF_TEMPLATE_URL = params.CF_TEMPLATE_URL
+    CF_TEMPLATE_NAME = params.CF_TEMPLATE_NAME
   }
   stages {
     stage('Create CCM Cluster') {
