@@ -10,7 +10,7 @@ pipeline {
     CCM_AUTH_TOKEN = credentials('CCM_AUTH_TOKEN')
   }
   stages {
-    stage 'Create CCM Cluster' {
+    stage('Create CCM Cluster') {
       agent 'mesos'
       steps {
         checkout scm
@@ -44,7 +44,7 @@ pipeline {
         stash name: 'ccm', includes: '.stash-*'
       }
     }
-    stage 'Test Install Script (Linux)' {
+    stage('Test Install Script (Linux)') {
       agent 'mesos'
       steps {
         checkout scm
@@ -59,7 +59,7 @@ pipeline {
            '''
       }
     }
-    stage 'Test Install Script (Mac)' {
+    stage('Test Install Script (Mac)') {
       agent 'Mac'
       steps {
         checkout scm
@@ -74,7 +74,7 @@ pipeline {
            '''
       }
     }
-    stage 'Test Install Script (Windows)' {
+    stage('Test Install Script (Windows)') {
       agent { label 'windows' }
       steps {
         checkout scm
@@ -89,7 +89,7 @@ pipeline {
            '''
       }
     }
-    stage 'Destroy CCM Cluster' {
+    stage('Destroy CCM Cluster') {
       agent 'mesos'
       steps {
         checkout scm
