@@ -18,7 +18,7 @@ pipeline {
       agent { label 'mesos' }
       steps {
         checkout scm
-        sh 'docker build -f cli/binary/Dockerfile.linux-binary -t linux-binary:${BUILD_NUMBER} .'
+        sh 'docker build -f ccm/Dockerfile -t ccm:${BUILD_NUMBER} .'
         sh '''#!/usr/bin/env bash
            set -o errexit -o nounset -o pipefail
            CLUSTER_ID="$(docker run \
@@ -28,8 +28,8 @@ pipeline {
                --env CCM_AUTH_TOKEN=${CCM_AUTH_TOKEN} \
                --env CF_TEMPLATE_URL=${CF_TEMPLATE_URL} \
                --env CF_TEMPLATE_NAME=${CF_TEMPLATE_NAME} \
-               linux-binary:${BUILD_NUMBER} \
-               /bin/bash -c ../ccm/start_ccm_cluster.sh)"
+               ccm:${BUILD_NUMBER} \
+               start_ccm_cluster.sh)"
            [[ -z "${CLUSTER_ID}" ]] && echo >&2 "CCM did not provide a CLUSTER_ID. Failing build..." && exit 1
            cat "${CLUSTER_ID}" > .stash-cluster-id
            '''
@@ -40,8 +40,8 @@ pipeline {
                --rm=true \
                --env CLUSTER_ID=${CLUSTER_ID} \
                --env CCM_AUTH_TOKEN=${CCM_AUTH_TOKEN} \
-               linux-binary:${BUILD_NUMBER} \
-               /bin/bash -c ../ccm/wait_for_ccm_cluster.sh)"
+               ccm:${BUILD_NUMBER} \
+               wait_for_ccm_cluster.sh)"
            [[ -z "${DCOS_URL}" ]] && echo >&2 "CCM did not provide a DCOS_URL. Failing build..." && exit 1
            cat "${DCOS_URL}" > .stash-dcos-url
            '''
@@ -98,7 +98,7 @@ pipeline {
       steps {
         checkout scm
         unstash 'ccm'
-        sh 'docker build -f cli/binary/Dockerfile.linux-binary -t linux-binary:${BUILD_NUMBER} .'
+        sh 'docker build -f ccm/Dockerfile -t ccm:${BUILD_NUMBER} .'
         sh '''#!/usr/bin/env bash
            set -o errexit -o nounset -o pipefail
            CLUSTER_ID="$(cat .stash-cluster-id)"
@@ -106,8 +106,8 @@ pipeline {
                --rm=true \
                --env CLUSTER_ID=${CLUSTER_ID} \
                --env CCM_AUTH_TOKEN=${CCM_AUTH_TOKEN} \
-               linux-binary:${BUILD_NUMBER} \
-               /bin/bash -c ../ccm/delete_ccm_cluster.sh
+               ccm:${BUILD_NUMBER} \
+               delete_ccm_cluster.sh
            '''
       }
     }
