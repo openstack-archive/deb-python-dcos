@@ -26,7 +26,7 @@ RESPONSE_JSON="$(http --ignore-stdin --follow \
      public_agents=1 \
      private_agents=1)"
 
-if ! echo "${RESPONSE_JSON}" | jq -e 'has("id")'; then
+if ! echo "${RESPONSE_JSON}" | jq -e 'has("id")' > /dev/null; then
   echo >&2 "Error: CCM response does not include an id."
   echo >&2 "Response: ${RESPONSE_JSON}"
   exit 1
