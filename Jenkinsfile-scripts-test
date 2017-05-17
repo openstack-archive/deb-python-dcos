@@ -99,6 +99,9 @@ pipeline {
            '''
       }
     }
+    // Windows test disabled
+    // TODO: bash on windows
+    /*
     stage('Test Install Script (Windows)') {
       agent { label 'windows' }
       steps {
@@ -114,6 +117,7 @@ pipeline {
            '''
       }
     }
+    */
   }
   post {
     always {
