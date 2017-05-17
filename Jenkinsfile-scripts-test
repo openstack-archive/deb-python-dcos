@@ -8,7 +8,7 @@ pipeline {
     string name: 'CF_TEMPLATE_NAME', description: 'CloudFormation Template Name', defaultValue: 'ee.single-master.cloudformation.json'
   }
   environment {
-    CCM_AUTH_TOKEN = credentials(credentialsId: '8e2b2400-0f14-4e4d-b319-e1360f97627d', variable: 'CCM_AUTH_TOKEN')
+    CCM_AUTH_TOKEN = credentials('8e2b2400-0f14-4e4d-b319-e1360f97627d')
   }
   stages {
     stage('Create CCM Cluster') {
