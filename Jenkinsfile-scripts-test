@@ -16,7 +16,7 @@ pipeline {
       steps {
         checkout scm
         sh 'docker build -f cli/binary/Dockerfile.linux-binary -t linux-binary:${BUILD_NUMBER} .'
-        sh '''#!/usr/bin/env bash
+        sh """#!/usr/bin/env bash
            set -o errexit -o nounset -o pipefail
            CLUSTER_ID="$(docker run \
                --rm=true \
@@ -29,7 +29,7 @@ pipeline {
                /bin/bash -c ../ccm/start_ccm_cluster.sh)"
            [[ -z "${CLUSTER_ID}" ]] && echo >&2 "CCM did not provide a CLUSTER_ID. Failing build..." && exit 1
            cat "${CLUSTER_ID}" > .stash-cluster-id
-           '''
+           """
         sh '''#!/usr/bin/env bash
            set -o errexit -o nounset -o pipefail
            CLUSTER_ID="$(cat .stash-cluster-id)"
