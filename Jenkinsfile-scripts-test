@@ -15,7 +15,7 @@ pipeline {
     CLUSTER_NAME = "DCOSCLI-SCRIPTS-TEST-${env.BUILD_NUMBER}"
   }
   stages {
-    stage('Create CCM Cluster') {
+    stage('Build Docker Image') {
       agent { label 'mesos' }
       steps {
         checkout scm
@@ -26,7 +26,21 @@ pipeline {
            docker build -f ccm/Dockerfile -t ccm:${BUILD_NUMBER} .
 
            echo "Saving docker image to file..."
-           docker save --output stash-docker-ccm-${BUILD_NUMBER}.tar ccm:${BUILD_NUMBER}
+           docker save --output .stash-docker-ccm-${BUILD_NUMBER}.tar ccm:${BUILD_NUMBER}
+           '''
+        stash name: 'docker', includes: '.stash-docker-*'
+      }
+    }
+    stage('Create CCM Cluster') {
+      agent { label 'mesos' }
+      steps {
+        checkout scm
+        unstash 'docker'
+        sh '''#!/usr/bin/env bash
+           set -o errexit -o nounset -o pipefail
+
+           echo "Loading docker image from file..."
+           docker load --input .stash-docker-ccm-${BUILD_NUMBER}.tar
 
            echo "Creating CCM Cluster..."
            CLUSTER_ID="$(docker run \
@@ -39,7 +53,7 @@ pipeline {
                ccm:${BUILD_NUMBER} \
                start_ccm_cluster.sh)"
            [[ -z "${CLUSTER_ID}" ]] && echo >&2 "CCM did not provide a CLUSTER_ID. Failing build..." && exit 1 || true
-           echo "${CLUSTER_ID}" > .stash-cluster-id
+           echo "${CLUSTER_ID}" > .stash-ccm-cluster-id
 
            echo "Waiting for CCM Cluster..."
            CLUSTER_ID="$(cat .stash-cluster-id)"
@@ -50,9 +64,9 @@ pipeline {
                ccm:${BUILD_NUMBER} \
                wait_for_ccm_cluster.sh)"
            [[ -z "${DCOS_URL}" ]] && echo >&2 "CCM did not provide a DCOS_URL. Failing build..." && exit 1 || true
-           echo "${DCOS_URL}" > .stash-dcos-url
+           echo "${DCOS_URL}" > .stash-ccm-dcos-url
            '''
-        stash name: 'ccm', includes: '.stash-*'
+        stash name: 'ccm', includes: '.stash-ccm-*'
       }
     }
     stage('Test Install Script (Linux)') {
@@ -105,6 +119,7 @@ pipeline {
     always {
       checkout scm
       unstash 'ccm'
+      unstash 'docker'
       sh '''#!/usr/bin/env bash
          set -o errexit -o nounset -o pipefail
 
@@ -112,7 +127,7 @@ pipeline {
          [[ -z "${CLUSTER_ID}" ]] && echo >&2 "No cluster to destroy (empty CLUSTER_ID). Failing build..." && exit 1 || true
 
          echo "Loading docker image from file..."
-         docker load --input stash-docker-ccm-${BUILD_NUMBER}.tar
+         docker load --input .stash-docker-ccm-${BUILD_NUMBER}.tar
 
          echo "Deleting CCM Cluster..."
          docker run \
