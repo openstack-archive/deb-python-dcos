@@ -11,20 +11,20 @@
 set -o errexit -o nounset -o pipefail
 
 # create cluster
-RESPONSE_JSON=$(http --ignore-stdin --check-status --follow \
+RESPONSE_JSON="$(http --ignore-stdin --check-status --follow \
      https://ccm.mesosphere.com/api/cluster/ \
      Authorization:"Token ${CCM_AUTH_TOKEN}" \
      name="${CLUSTER_NAME}" \
+     cluster_desc="DC/OS CLI testing cluster" \
      cloud_provider=0 \
      region="${CCM_CLUSTER_REGION:-"eu-central-1"}" \
      time=120 \
-     channel="${DCOS_CHANNEL:-}" \
-     cluster_desc="DC/OS CLI testing cluster" \
-     template="${CF_TEMPLATE_NAME:-}" \
-     template_url="${CF_TEMPLATE_URL:-}" \
+     $([[ -n "${DCOS_CHANNEL:-}" ]] && echo "channel='${DCOS_CHANNEL}'") \
+     $([[ -n "${CF_TEMPLATE_NAME:-}" ]] && echo "template='${CF_TEMPLATE_NAME}'") \
+     $([[ -n "${CF_TEMPLATE_URL:-}" ]] && echo "template_url='${CF_TEMPLATE_URL}'") \
      adminlocation=0.0.0.0/0 \
      public_agents=1 \
-     private_agents=1);
+     private_agents=1)"
 
 CLUSTER_ID="$(echo "${RESPONSE_JSON}" | jq -r ".id")"
 echo "${CLUSTER_ID}"

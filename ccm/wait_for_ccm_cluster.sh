@@ -8,16 +8,15 @@ set -o errexit -o nounset -o pipefail
 
 # wait for cluster to come up
 while true; do
-    STATUS=$(http --ignore-stdin --check-status --follow \
+    RESPONSE_JSON="$(http --ignore-stdin --check-status --follow \
                   https://ccm.mesosphere.com/api/cluster/${CLUSTER_ID}/ \
-                  Authorization:"Token ${CCM_AUTH_TOKEN}" | \
-                    jq ".status");
+                  Authorization:"Token ${CCM_AUTH_TOKEN}")"
+    STATUS="$(echo "${RESPONSE_JSON}" | jq -r ".status")"
     if [ "${STATUS}" -eq 0 ]; then
-        CLUSTER_INFO=$(http --check-status --follow GET https://ccm.mesosphere.com/api/cluster/${CLUSTER_ID}/ Authorization:"Token ${CCM_AUTH_TOKEN}" | jq ".cluster_info")
-
+        CLUSTER_INFO="$(echo "${RESPONSE_JSON}" | jq ".cluster_info")"
          # ensure cluster_info is populated
-         if [ ! -z "$CLUSTER_INFO" ]; then
-            eval CLUSTER_INFO=$CLUSTER_INFO  # unescape json
+         if [ -n "${CLUSTER_INFO}" ]; then
+            eval CLUSTER_INFO=${CLUSTER_INFO}  # unescape json
             break;
          fi;
     fi;
