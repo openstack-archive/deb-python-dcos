@@ -15,17 +15,17 @@ pipeline {
       agent { label 'mesos' }
       steps {
         checkout scm
-        sh 'docker build -f cli/binary/Dockerfile.linux-binary -t linux-binary:${env.BUILD_NUMBER} .'
+        sh 'docker build -f cli/binary/Dockerfile.linux-binary -t linux-binary:${BUILD_NUMBER} .'
         sh '''#!/usr/bin/env bash
            set -o errexit -o nounset -o pipefail
            CLUSTER_ID="$(docker run \
                --rm=true \
-               --env DCOS_CHANNEL=${env.DCOS_CHANNEL} \
-               --env CLUSTER_NAME=DCOSCLI-JENKINS-${env.BUILD_NUMBER} \
-               --env CCM_AUTH_TOKEN=${param.CCM_AUTH_TOKEN} \
-               --env CF_TEMPLATE_URL=${env.CF_TEMPLATE_URL} \
-               --env CF_TEMPLATE_NAME=${env.CF_TEMPLATE_NAME} \
-               linux-binary:${env.BUILD_NUMBER} \
+               --env DCOS_CHANNEL=${params.DCOS_CHANNEL} \
+               --env CLUSTER_NAME=DCOSCLI-JENKINS-${BUILD_NUMBER} \
+               --env CCM_AUTH_TOKEN=${CCM_AUTH_TOKEN} \
+               --env CF_TEMPLATE_URL=${params.CF_TEMPLATE_URL} \
+               --env CF_TEMPLATE_NAME=${params.CF_TEMPLATE_NAME} \
+               linux-binary:${BUILD_NUMBER} \
                /bin/bash -c ../ccm/start_ccm_cluster.sh)"
            [[ -z "${CLUSTER_ID}" ]] && echo >&2 "CCM did not provide a CLUSTER_ID. Failing build..." && exit 1
            cat "${CLUSTER_ID}" > .stash-cluster-id
@@ -36,8 +36,8 @@ pipeline {
            DCOS_URL="$(docker run \
                --rm=true \
                --env CLUSTER_ID=${CLUSTER_ID} \
-               --env CCM_AUTH_TOKEN=${param.CCM_AUTH_TOKEN} \
-               linux-binary:%env.BUILD_NUMBER% \
+               --env CCM_AUTH_TOKEN=${CCM_AUTH_TOKEN} \
+               linux-binary:${BUILD_NUMBER} \
                /bin/bash -c ../ccm/wait_for_ccm_cluster.sh)"
            [[ -z "${DCOS_URL}" ]] && echo >&2 "CCM did not provide a DCOS_URL. Failing build..." && exit 1
            cat "${DCOS_URL}" > .stash-dcos-url
@@ -92,19 +92,18 @@ pipeline {
     }
     stage('Destroy CCM Cluster') {
       agent { label 'mesos' }
-      when { expression { return params.DEBUG_BUILD } }
       steps {
         checkout scm
         unstash 'ccm'
-        sh 'docker build -f cli/binary/Dockerfile.linux-binary -t linux-binary:${env.BUILD_NUMBER} .'
+        sh 'docker build -f cli/binary/Dockerfile.linux-binary -t linux-binary:${BUILD_NUMBER} .'
         sh '''#!/usr/bin/env bash
            set -o errexit -o nounset -o pipefail
            CLUSTER_ID="$(cat .stash-cluster-id)"
            docker run \
                --rm=true \
                --env CLUSTER_ID=${CLUSTER_ID} \
-               --env CCM_AUTH_TOKEN=${param.CCM_AUTH_TOKEN} \
-               linux-binary:${env.BUILD_NUMBER} \
+               --env CCM_AUTH_TOKEN=${CCM_AUTH_TOKEN} \
+               linux-binary:${BUILD_NUMBER} \
                /bin/bash -c ../ccm/delete_ccm_cluster.sh
            '''
       }
