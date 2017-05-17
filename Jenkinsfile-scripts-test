@@ -25,6 +25,9 @@ pipeline {
            echo "Building docker image..."
            docker build -f ccm/Dockerfile -t ccm:${BUILD_NUMBER} .
 
+           echo "Saving docker image to file..."
+           docker save --output stash-docker-ccm-${BUILD_NUMBER}.tar ccm:${BUILD_NUMBER}
+
            echo "Creating CCM Cluster..."
            CLUSTER_ID="$(docker run \
                --rm=true \
@@ -35,7 +38,7 @@ pipeline {
                --env CF_TEMPLATE_NAME="${CF_TEMPLATE_NAME:-}" \
                ccm:${BUILD_NUMBER} \
                start_ccm_cluster.sh)"
-           [[ -z "${CLUSTER_ID}" ]] && echo >&2 "CCM did not provide a CLUSTER_ID. Failing build..." && exit 1
+           [[ -z "${CLUSTER_ID}" ]] && echo >&2 "CCM did not provide a CLUSTER_ID. Failing build..." && exit 1 || true
            echo "${CLUSTER_ID}" > .stash-cluster-id
 
            echo "Waiting for CCM Cluster..."
@@ -46,7 +49,7 @@ pipeline {
                --env CCM_AUTH_TOKEN="${CCM_AUTH_TOKEN}" \
                ccm:${BUILD_NUMBER} \
                wait_for_ccm_cluster.sh)"
-           [[ -z "${DCOS_URL}" ]] && echo >&2 "CCM did not provide a DCOS_URL. Failing build..." && exit 1
+           [[ -z "${DCOS_URL}" ]] && echo >&2 "CCM did not provide a DCOS_URL. Failing build..." && exit 1 || true
            echo "${DCOS_URL}" > .stash-dcos-url
            '''
         stash name: 'ccm', includes: '.stash-*'
@@ -62,8 +65,8 @@ pipeline {
            DCOS_URL="$(cat .stash-dcos-url)"
            EXE_PATH="$(bin/install/install-binary-dcos-cli.sh "${DCOS_URL}")"
            echo "${EXE_PATH}"
-           [[ -z "${EXE_PATH}" ]] && echo >&2 "Executable path not printed by install script. Failing build..." && exit 1
-           [[ ! -e "${EXE_PATH}" ]] && echo >&2 "Executable not found. Failing build..." && exit 1
+           [[ -z "${EXE_PATH}" ]] && echo >&2 "Executable path not printed by install script. Failing build..." && exit 1 || true
+           [[ ! -e "${EXE_PATH}" ]] && echo >&2 "Executable not found. Failing build..." && exit 1 || true
            '''
       }
     }
@@ -77,8 +80,8 @@ pipeline {
            DCOS_URL="$(cat .stash-dcos-url)"
            EXE_PATH="$(bin/install/install-binary-dcos-cli.sh "${DCOS_URL}")"
            echo "${EXE_PATH}"
-           [[ -z "${EXE_PATH}" ]] && echo >&2 "Executable path not printed by install script. Failing build..." && exit 1
-           [[ ! -e "${EXE_PATH}" ]] && echo >&2 "Executable not found. Failing build..." && exit 1
+           [[ -z "${EXE_PATH}" ]] && echo >&2 "Executable path not printed by install script. Failing build..." && exit 1 || true
+           [[ ! -e "${EXE_PATH}" ]] && echo >&2 "Executable not found. Failing build..." && exit 1 || true
            '''
       }
     }
@@ -92,8 +95,8 @@ pipeline {
            DCOS_URL="$(cat .stash-dcos-url)"
            EXE_PATH="$(bin/install/install-binary-dcos-cli.sh "${DCOS_URL}")"
            echo "${EXE_PATH}"
-           [[ -z "${EXE_PATH}" ]] && echo >&2 "Executable path not printed by install script. Failing build..." && exit 1
-           [[ ! -e "${EXE_PATH}" ]] && echo >&2 "Executable not found. Failing build..." && exit 1
+           [[ -z "${EXE_PATH}" ]] && echo >&2 "Executable path not printed by install script. Failing build..." && exit 1 || true
+           [[ ! -e "${EXE_PATH}" ]] && echo >&2 "Executable not found. Failing build..." && exit 1 || true
            '''
       }
     }
@@ -106,10 +109,10 @@ pipeline {
          set -o errexit -o nounset -o pipefail
 
          CLUSTER_ID="$(cat .stash-cluster-id)"
-         [[ -z "${CLUSTER_ID}" ]] && echo >&2 "No cluster to destroy (empty CLUSTER_ID). Failing build..." && exit 1
+         [[ -z "${CLUSTER_ID}" ]] && echo >&2 "No cluster to destroy (empty CLUSTER_ID). Failing build..." && exit 1 || true
 
-         echo "Building docker image..."
-         docker build -f ccm/Dockerfile -t ccm:${BUILD_NUMBER} .
+         echo "Loading docker image from file..."
+         docker load --input stash-docker-ccm-${BUILD_NUMBER}.tar
 
          echo "Deleting CCM Cluster..."
          docker run \
