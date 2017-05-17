@@ -94,6 +94,7 @@ pipeline {
       }
     }
     stage('Destroy CCM Cluster') {
+      when { expression { return true } }
       agent { label 'mesos' }
       steps {
         checkout scm
@@ -102,6 +103,7 @@ pipeline {
         sh '''#!/usr/bin/env bash
            set -o errexit -o nounset -o pipefail
            CLUSTER_ID="$(cat .stash-cluster-id)"
+           [[ -z "${CLUSTER_ID}" ]] && echo >&2 "No cluster to destroy (empty CLUSTER_ID). Failing build..." && exit 1
            docker run \
                --rm=true \
                --env CLUSTER_ID=${CLUSTER_ID} \
