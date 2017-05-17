@@ -21,13 +21,17 @@ pipeline {
         sh 'docker build -f ccm/Dockerfile -t ccm:${BUILD_NUMBER} .'
         sh '''#!/usr/bin/env bash
            set -o errexit -o nounset -o pipefail
+           if [[ -z "${CF_TEMPLATE_URL:-}" ]] && [[ -z "${CF_TEMPLATE_NAME:-}" ]]; then
+             echo >&2 "Blank CF_TEMPLATE_URL and CF_TEMPLATE_NAME are blank, but one must be provided. Failing build..."
+             exit 1
+           fi
            CLUSTER_ID="$(docker run \
                --rm=true \
                --env DCOS_CHANNEL="${DCOS_CHANNEL}" \
                --env CLUSTER_NAME=DCOSCLI-JENKINS-"${BUILD_NUMBER}" \
                --env CCM_AUTH_TOKEN="${CCM_AUTH_TOKEN}" \
-               --env CF_TEMPLATE_URL="${CF_TEMPLATE_URL}" \
-               --env CF_TEMPLATE_NAME="${CF_TEMPLATE_NAME}" \
+               --env CF_TEMPLATE_URL="${CF_TEMPLATE_URL:-}" \
+               --env CF_TEMPLATE_NAME="${CF_TEMPLATE_NAME:-}" \
                ccm:${BUILD_NUMBER} \
                start_ccm_cluster.sh)"
            [[ -z "${CLUSTER_ID}" ]] && echo >&2 "CCM did not provide a CLUSTER_ID. Failing build..." && exit 1
