@@ -1,0 +1,28 @@
+#!/usr/bin/env groovy
+
+pipeline {
+  agent {
+    docker {
+      image 'mesosphere/aws-cli'
+      label 'latest'
+    }
+  }
+
+  parameters {
+    string name: 'AWS_DEFAULT_REGION', description: 'What AWS region?', defaultValue: 'US-WEST-2'
+  }
+
+  environment {
+    AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+  }
+
+  stages {
+    stage 'Upload Scripts to S3' {
+      steps {
+        checkout scm
+        sh 'bin/install/upload_to_s3.sh'
+      }
+    }
+  }
+}
