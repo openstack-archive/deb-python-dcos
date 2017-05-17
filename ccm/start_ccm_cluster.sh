@@ -11,7 +11,7 @@
 set -o errexit -o nounset -o pipefail
 
 # create cluster
-CLUSTER_ID=$(http --ignore-stdin \
+RESPONSE_JSON=$(http --ignore-stdin --check-status --follow \
      https://ccm.mesosphere.com/api/cluster/ \
      Authorization:"Token ${CCM_AUTH_TOKEN}" \
      name="${CLUSTER_NAME}" \
@@ -24,7 +24,7 @@ CLUSTER_ID=$(http --ignore-stdin \
      template_url="${CF_TEMPLATE_URL:-}" \
      adminlocation=0.0.0.0/0 \
      public_agents=1 \
-     private_agents=1 | \
-     jq ".id");
+     private_agents=1);
 
+CLUSTER_ID="$(echo "${RESPONSE_JSON}" | jq -r ".id")"
 echo "${CLUSTER_ID}"

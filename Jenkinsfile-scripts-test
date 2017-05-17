@@ -31,7 +31,7 @@ pipeline {
                ccm:${BUILD_NUMBER} \
                start_ccm_cluster.sh)"
            [[ -z "${CLUSTER_ID}" ]] && echo >&2 "CCM did not provide a CLUSTER_ID. Failing build..." && exit 1
-           cat "${CLUSTER_ID}" > .stash-cluster-id
+           echo "${CLUSTER_ID}" > .stash-cluster-id
            '''
         sh '''#!/usr/bin/env bash
            set -o errexit -o nounset -o pipefail
@@ -43,7 +43,7 @@ pipeline {
                ccm:${BUILD_NUMBER} \
                wait_for_ccm_cluster.sh)"
            [[ -z "${DCOS_URL}" ]] && echo >&2 "CCM did not provide a DCOS_URL. Failing build..." && exit 1
-           cat "${DCOS_URL}" > .stash-dcos-url
+           echo "${DCOS_URL}" > .stash-dcos-url
            '''
         stash name: 'ccm', includes: '.stash-*'
       }

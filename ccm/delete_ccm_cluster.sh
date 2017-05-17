@@ -6,4 +6,4 @@
 
 set -o errexit -o nounset -o pipefail
 
-http --ignore-stdin DELETE https://ccm.mesosphere.com/api/cluster/${CLUSTER_ID}/ Authorization:"Token ${CCM_AUTH_TOKEN}"
+http --ignore-stdin --check-status --follow DELETE https://ccm.mesosphere.com/api/cluster/${CLUSTER_ID}/ Authorization:"Token ${CCM_AUTH_TOKEN}"
