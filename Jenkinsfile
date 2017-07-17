@@ -291,7 +291,7 @@ def builders = [:]
 
 builders['linux-binary'] = binaryBuilder('linux', 'py35', '/workspace')({
     stage ("Build dcos-cli binary") {
-        dir('dcos-cli/cli') {
+        dir('dcos-cli') {
             sh "make binary"
             sh "dist/dcos"
         }
@@ -301,7 +301,7 @@ builders['linux-binary'] = binaryBuilder('linux', 'py35', '/workspace')({
 
 builders['mac-binary'] = binaryBuilder('mac', 'mac')({
     stage ("Build dcos-cli binary") {
-        dir('dcos-cli/cli') {
+        dir('dcos-cli') {
             sh "make binary"
             sh "dist/dcos"
         }
@@ -311,7 +311,7 @@ builders['mac-binary'] = binaryBuilder('mac', 'mac')({
 
 builders['windows-binary'] = binaryBuilder('windows', 'windows')({
     stage ("Build dcos-cli binary") {
-        dir('dcos-cli/cli') {
+        dir('dcos-cli') {
             bat 'bash -c "make binary"'
             bat 'dist\\dcos.exe'
         }
@@ -327,7 +327,7 @@ builders['linux-tests'] = testBuilder('linux', 'py35', '/workspace')({
            sed -iold "s/^.* dcos.snakeoil.mesosphere.com$/${DCOS_URL} dcos.snakeoil.mesosphere.com/" /etc/hosts || \
            echo ${DCOS_URL} dcos.snakeoil.mesosphere.com >> /etc/hosts'''
 
-        dir('dcos-cli/cli') {
+        dir('dcos-cli') {
             sh '''
                export PYTHONIOENCODING=utf-8; \
                export DCOS_CONFIG=tests/data/dcos.toml; \
@@ -352,7 +352,7 @@ builders['mac-tests'] = testBuilder('mac', 'mac')({
            echo ${DCOS_URL} dcos.snakeoil.mesosphere.com >> hosts.local; \
            sudo cp ./hosts.local /etc/hosts'''
 
-        dir('dcos-cli/cli') {
+        dir('dcos-cli') {
             sh '''
                export PYTHONIOENCODING=utf-8; \
                export DCOS_CONFIG=tests/data/dcos.toml; \
@@ -375,7 +375,7 @@ builders['windows-tests'] = testBuilder('windows', 'windows', 'C:\\windows\\work
             echo %DCOS_URL% dcos.snakeoil.mesosphere.com >> C:\\windows\\system32\\drivers\\etc\\hosts &
             echo dcos_acs_token = \"%DCOS_ACS_TOKEN%\" >> dcos-cli\\cli\\tests\\data\\dcos.toml'''
 
-        dir('dcos-cli/cli') {
+        dir('dcos-cli') {
             bat '''
                 bash -c " \
                 export PYTHONIOENCODING=utf-8; \
