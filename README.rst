@@ -101,6 +101,12 @@ directory to one of those two and follow the instructions.
 Initialization
 ##############
 
+In order to run the full set of integration tests, you need to make sure you
+launch a DC/OS cluster with the proper capabilities set. The easiest way to do
+this is using `dcos-launch`_ with the configuration listed below.
+
+The test require you to point the CLI at a configuration 
+
 The `config` integration tests use static config files. To run these tests
 make sure you set owner only permissions on these files:
 
@@ -181,6 +187,7 @@ These packages are available to be installed by the DC/OS CLI installation scrip
 .. _dcos: https://pypi.python.org/pypi/dcos
 .. _dcos configuration parameters: https://dcos.io/docs/1.9/administration/installing/custom/configuration-parameters/
 .. _dcoscli: https://pypi.python.org/pypi/dcoscli
+.. _dcos-launch: https://github.com/mesosphere/dcos-launch 
 .. _jq: http://stedolan.github.io/jq/
 .. _git: http://git-scm.com
 .. _installation instructions: https://dcos.io/docs/usage/cli/install/
